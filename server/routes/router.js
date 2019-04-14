@@ -1,9 +1,12 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import  mongoose from 'mongoose';
+
 import verify from '../config/verify';
 
 import user from '../models/user';
+import recipes from '../models/recipes';
 
 const router = express.Router();
 
@@ -63,8 +66,7 @@ router.post('/login', (req, res, next) => {
                                 email: response.email,
                                 userId: response._id
                             },
-                            process.env.JWT_KEY || 'recipe', 
-                            {
+                            process.env.JWT_KEY || 'recipe', {
                                 expiresIn: "1h"
                             }
                         );
@@ -84,8 +86,79 @@ router.post('/login', (req, res, next) => {
         });
 });
 
+router.get('/recipe-list', verify, (req, res, next) => {
+    recipes.find()
+        .exec()
+        .then(response => {
+            res.status(200).send({
+                response: response
+            })
+        })
+        .catch(err => {
+            res.status(500).send({
+                error: err
+            });
+        })
+});
+
+router.post('/recipe-add', verify, (req, res, next) => {
+    let recipe = new recipes({
+        '_id' : new mongoose.Types.ObjectId(),
+        'name': req.body.name,
+        'description': req.body.description,
+        'imagePath': req.body.imagePath
+    });
+    for(let ingredients of req.body.ingredients) {
+        recipe.ingredients.push({
+            'name': ingredients.name,
+            'amount': ingredients.amount 
+        });    
+    }
+    recipe.save()
+        .then(response => {
+            res.status(200).send({
+                response: response
+            })
+        })
+        .catch(err => {
+            res.status(500).send({
+                error: err
+            });
+        })
+});
+
+router.post('/recipe-find', verify, (req, res, next) => {
+    recipes.findOne({'_id': new mongoose.Types.ObjectId(req.body._id)})
+        .exec()
+        .then(response => {
+            res.status(200).send({
+                response: response
+            })
+        })
+        .catch(err => {
+            res.status(500).send({
+                error: err
+            });
+        })
+});
+
+router.post('/recipe-delete', verify, (req, res, next) => {
+    recipes.findByIdAndRemove({'_id': new mongoose.Types.ObjectId(req.body._id)})
+        .exec()
+        .then(response => {
+            res.status(200).send({
+                response: response
+            })
+        })
+        .catch(err => {
+            res.status(500).send({
+                error: err
+            });
+        })
+});
+
 // router.get('/all', verify, (req, res, next) => {
-    
+
 //     user.find({
 //         email: 'test@mail.com'
 //     })

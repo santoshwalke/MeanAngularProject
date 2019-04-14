@@ -1,3 +1,7 @@
+<h2>
+    Recipe Details
+</h2>
+<hr>
 <div class="row">
   <div class="col-xs-12">
     <img
@@ -25,8 +29,8 @@
       </button>
       <ul class="dropdown-menu" [ngClass]="{show: f.isOpen}">
         <li><a class="dropdown-item" (click)="onAddToShoppingList()" style="cursor: pointer;">To Shopping List</a></li>
-        <li><a  class="dropdown-item"  style="cursor: pointer;" (click) ="onEditNavigate()">Edit Recipe</a></li>
-        <li><a  class="dropdown-item"  style="cursor: pointer;" (click)="onDeleteRecipe()">Delete Recipe</a></li>
+        <li><a class="dropdown-item" style="cursor: pointer;" (click)="onEditRecipe()">Edit Recipe</a></li>
+        <li><a class="dropdown-item" style="cursor: pointer;" (click)="onDeleteRecipe()">Delete Recipe</a></li>
       </ul>
     </div>
   </div>

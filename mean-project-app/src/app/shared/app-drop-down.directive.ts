@@ -11,7 +11,6 @@ export class AppDropDownDirective {
   @HostBinding('class.open') isOpen = false;
 
   @HostListener('click') toggleopen() {
-     console.log(1);
      this.isOpen = !this.isOpen;
   }
 
