@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators} from '@angular/forms';
 
+import { AuthService } from '../auth.service';
+
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
@@ -8,7 +10,7 @@ import { FormControl, FormGroup, Validators} from '@angular/forms';
 })
 export class SignInComponent implements OnInit {
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   signInForm: FormGroup;
   buttonStatus = false;
@@ -27,7 +29,8 @@ export class SignInComponent implements OnInit {
   }
 
   onSignInSubmit() {
-      console.log(this.signInForm);
+      this.authService.signIn(this.signInForm.value);
+    //   console.log(this.signInForm);
   }
 
 }

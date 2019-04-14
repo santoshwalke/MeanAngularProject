@@ -8,12 +8,13 @@ import user from '../models/user';
 const router = express.Router();
 
 // Auth action
-router.post('/register', (req, res, next) => {
+router.post('/registration', (req, res, next) => {
 
     bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
             return res.status(500).json({
-                error: err
+                message: err,
+                status: false
             });
         } else {
             let newUser = new user({
@@ -23,12 +24,14 @@ router.post('/register', (req, res, next) => {
             newUser.save()
                 .then(response => {
                     res.status(200).send({
-                        'response': response
+                        message: 'successfully registered',
+                        status: true
                     });
                 })
                 .catch(error => {
                     res.status(400).send({
-                        'error': error
+                        message: error,
+                        status: false
                     })
                 });
         }
@@ -51,7 +54,8 @@ router.post('/login', (req, res, next) => {
                 bcrypt.compare(req.body.password, response.password, (err, result) => {
                     if (err) {
                         return res.status(401).json({
-                            message: "Auth failed"
+                            message: "Auth failed",
+                            status: false
                         });
                     }
                     if (result) {
@@ -65,7 +69,8 @@ router.post('/login', (req, res, next) => {
                             }
                         );
                         res.status(200).json({
-                            message: "Auth successful",
+                            status: true,
+                            message: "successful",
                             token: token
                         });
                     }
