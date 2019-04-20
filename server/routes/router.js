@@ -1,68 +1,64 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import  mongoose from 'mongoose';
-
-import verify from '../config/verify';
 
 import user from '../models/user';
-import recipes from '../models/recipes';
 
 const router = express.Router();
 
 // Auth action
-router.post('/registration', (req, res, next) => {
+router.post( '/registration', ( req, res, next ) => {
 
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-        if (err) {
-            return res.status(500).json({
+    bcrypt.hash( req.body.password, 10, ( err, hash ) => {
+        if ( err ) {
+            return res.status( 500 ).json( {
                 message: err,
                 status: false
-            });
+            } );
         } else {
-            let newUser = new user({
+            let newUser = new user( {
                 'email': req.body.email,
                 'password': hash
-            });
+            } );
             newUser.save()
-                .then(response => {
-                    res.status(200).send({
+                .then( response => {
+                    res.status( 200 ).send( {
                         message: 'successfully registered',
                         status: true
-                    });
-                })
-                .catch(error => {
-                    res.status(400).send({
+                    } );
+                } )
+                .catch( error => {
+                    res.status( 400 ).send( {
                         message: error,
                         status: false
-                    })
-                });
+                    } )
+                } );
         }
-    });
-});
+    } );
+} );
 
-router.post('/login', (req, res, next) => {
-    user.findOne({
+router.post( '/login', ( req, res, next ) => {
+    user.findOne( {
             'email': req.body.email
-        })
+        } )
         .exec()
-        .then(response => {
-            if (!response) {
-                res.status(201).json({
+        .then( response => {
+            if ( !response ) {
+                res.status( 201 ).json( {
                     success: false,
                     message: 'Incorrect login credentials.'
-                });
-            } else if (response) {
+                } );
+            } else if ( response ) {
                 // console.log(response);
-                bcrypt.compare(req.body.password, response.password, (err, result) => {
-                    if (err) {
-                        return res.status(401).json({
+                bcrypt.compare( req.body.password, response.password, ( err, result ) => {
+                    if ( err ) {
+                        return res.status( 401 ).json( {
                             message: "Auth failed",
                             status: false
-                        });
+                        } );
                     }
-                    if (result) {
-                        const token = jwt.sign({
+                    if ( result ) {
+                        const token = jwt.sign( {
                                 email: response.email,
                                 userId: response._id
                             },
@@ -70,92 +66,21 @@ router.post('/login', (req, res, next) => {
                                 expiresIn: "1h"
                             }
                         );
-                        res.status(200).json({
+                        res.status( 200 ).json( {
                             status: true,
                             message: "successful",
                             token: token
-                        });
+                        } );
                     }
-                });
+                } );
             }
-        })
-        .catch(err => {
-            res.status(500).send({
+        } )
+        .catch( err => {
+            res.status( 500 ).send( {
                 'error': err
-            })
-        });
-});
-
-router.get('/recipe-list', verify, (req, res, next) => {
-    recipes.find()
-        .exec()
-        .then(response => {
-            res.status(200).send({
-                response: response
-            })
-        })
-        .catch(err => {
-            res.status(500).send({
-                error: err
-            });
-        })
-});
-
-router.post('/recipe-add', verify, (req, res, next) => {
-    let recipe = new recipes({
-        '_id' : new mongoose.Types.ObjectId(),
-        'name': req.body.name,
-        'description': req.body.description,
-        'imagePath': req.body.imagePath
-    });
-    for(let ingredients of req.body.ingredients) {
-        recipe.ingredients.push({
-            'name': ingredients.name,
-            'amount': ingredients.amount 
-        });    
-    }
-    recipe.save()
-        .then(response => {
-            res.status(200).send({
-                response: response
-            })
-        })
-        .catch(err => {
-            res.status(500).send({
-                error: err
-            });
-        })
-});
-
-router.post('/recipe-find', verify, (req, res, next) => {
-    recipes.findOne({'_id': new mongoose.Types.ObjectId(req.body._id)})
-        .exec()
-        .then(response => {
-            res.status(200).send({
-                response: response
-            })
-        })
-        .catch(err => {
-            res.status(500).send({
-                error: err
-            });
-        })
-});
-
-router.post('/recipe-delete', verify, (req, res, next) => {
-    recipes.findByIdAndRemove({'_id': new mongoose.Types.ObjectId(req.body._id)})
-        .exec()
-        .then(response => {
-            res.status(200).send({
-                response: response
-            })
-        })
-        .catch(err => {
-            res.status(500).send({
-                error: err
-            });
-        })
-});
+            } )
+        } );
+} );
 
 // router.get('/all', verify, (req, res, next) => {
 
