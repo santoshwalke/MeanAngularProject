@@ -8,12 +8,14 @@ import { AppComponent } from './app.component';
 import { AuthRoutingModule } from './auth/auth-routing.module';
 import { HeaderComponent } from './core/header/header.component';
 import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-edit.component';
+import { ShoppingListComponent } from './shopping-list/shopping-list.component';
 
-@NgModule({
+@NgModule( {
   declarations: [
     AppComponent,
     HeaderComponent,
-    ShoppingEditComponent
+    ShoppingEditComponent,
+    ShoppingListComponent
   ],
   imports: [
     BrowserModule,
@@ -25,5 +27,5 @@ import { ShoppingEditComponent } from './shopping-list/shopping-edit/shopping-ed
   ],
   providers: [],
   bootstrap: [AppComponent]
-})
+} )
 export class AppModule { }

@@ -24,6 +24,7 @@ export class AuthService {
             .subscribe( ( data: { status: string, message: string, token?: string } ) => {
                 if ( data.status ) {
                     localStorage.setItem( 'token', data.token );
+                    this.token = data.token;
                     this.message = data.message;
                     this.router.navigate( ['/recipes'] );
                 } else {
@@ -53,6 +54,12 @@ export class AuthService {
     }
 
     isAuthenticated() {
-        return this.token !== null;
+        return this.token != null;
+    }
+
+    logout() {
+        this.token = null;
+        localStorage.removeItem( 'token' );
+        this.router.navigate( ['/'] );
     }
 }
